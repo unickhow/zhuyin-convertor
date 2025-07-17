@@ -4,7 +4,7 @@ import pinyin from 'pinyin'
 import zhuyinMap from './map/zhuyin.json'
 import toneSymbols from './map/toneSymbols.json'
 
-function App() {
+function App () {
   const [inputText, setInputText] = useState('')
   const [outputText, setOutputText] = useState('')
   const [convertType, setConvertType] = useState('zhuyin')
@@ -16,21 +16,38 @@ function App() {
     return pyArr.map(item => item[0]).join(' ')
   }
 
+  const isChinese = (char) => {
+    return /[\u4e00-\u9fff]/.test(char)
+  }
+
   const convertToZhuyin = (text) => {
     const pyArr = pinyin(text, {
       style: pinyin.STYLE_TONE2,
     })
 
-    return pyArr.map(item => {
-      const pinyinWithTone = item[0]
-      const toneNumber = pinyinWithTone.match(/\d/) ? pinyinWithTone.match(/\d/)[0] : '0'
-      const pinyinWithoutTone = pinyinWithTone.replace(/\d/g, '')
+    return text.split('').map((char, index) => {
+      if (isChinese(char) && pyArr[index]) {
+        const pinyinWithTone = pyArr[index][0]
+        const toneNumber = pinyinWithTone.match(/\d/) ? pinyinWithTone.match(/\d/)[0] : '0'
+        const pinyinWithoutTone = pinyinWithTone.replace(/\d/g, '')
 
-      const zhuyinBase = zhuyinMap[pinyinWithoutTone] || pinyinWithoutTone
-      const toneSymbol = toneSymbols[toneNumber] || ''
+        const zhuyinBase = zhuyinMap[pinyinWithoutTone] || pinyinWithoutTone
+        const toneSymbol = toneSymbols[toneNumber] || ''
 
-      return zhuyinBase + toneSymbol
-    }).join(' ')
+        return {
+          char: char,
+          zhuyin: zhuyinBase,
+          tone: toneNumber,
+          symbol: toneSymbol
+        }
+      }
+      return {
+        char: char,
+        zhuyin: '',
+        tone: '0',
+        symbol: ''
+      }
+    })
   }
 
   const handleConvert = () => {
@@ -41,10 +58,61 @@ function App() {
     }
   }
 
+  const handleModeChange = (mode) => {
+    setConvertType(mode)
+    setOutputText('')
+  }
+
+  const renderZhuyinOutput = () => {
+    if (convertType === 'zhuyin' && Array.isArray(outputText)) {
+      return (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          {outputText.map((item, index) => (
+            <div key={index} style={{
+              display: 'flex',
+              alignItems: 'center',
+              minWidth: '30px'
+            }}>
+              <div style={{
+                fontSize: '3rem',
+                minHeight: '20px'
+              }}>
+                {item.char}
+              </div>
+              <div style={{
+                display: 'flex',
+                flexDirection: item.tone === '0' ? 'column-reverse' : 'row',
+                alignItems: 'center'
+              }}>
+                <div style={{
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  writingMode: 'vertical-rl',
+                  textOrientation: 'upright'
+                }}>
+                  {item.zhuyin}
+                </div>
+                <div style={{
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  lineHeight: item.tone === '0' ? '1px' : '3rem',
+                  color: '#666'
+                }}>
+                  {item.symbol}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )
+    }
+    return outputText || '轉換結果會顯示在這裡...'
+  }
+
   return (
     <>
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <h1>中文轉音標工具</h1>
+        <h1>ㄅㄆㄇㄈ注音小幫手</h1>
         <p>支援中文轉拼音與注音符號</p>
       </div>
 
@@ -55,7 +123,7 @@ function App() {
               type="radio"
               value="zhuyin"
               checked={convertType === 'zhuyin'}
-              onChange={(e) => setConvertType(e.target.value)}
+              onChange={(e) => handleModeChange(e.target.value)}
             />
             轉換為注音符號
           </label>
@@ -64,7 +132,7 @@ function App() {
               type="radio"
               value="pinyin"
               checked={convertType === 'pinyin'}
-              onChange={(e) => setConvertType(e.target.value)}
+              onChange={(e) => handleModeChange(e.target.value)}
             />
             轉換為拼音
           </label>
@@ -92,7 +160,7 @@ function App() {
           fontSize: '18px',
           lineHeight: '1.5'
         }}>
-          {outputText || '轉換結果會顯示在這裡...'}
+          {renderZhuyinOutput()}
         </div>
       </div>
     </>
