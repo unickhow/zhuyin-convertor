@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { ZoomIn, ZoomOut, ScanSearch } from 'lucide-react'
 
 interface ZhuyinItem {
   char: string
@@ -23,6 +24,7 @@ function App() {
   const [inputText, setInputText] = useState<string>('')
   const [outputText, setOutputText] = useState<OutputText>('')
   const [convertType, setConvertType] = useState<ConvertType>('zhuyin')
+  const [textScale, setTextScale] = useState<number>(1)
 
   const convertToPinyin = (text: string): string => {
     const pyArr = pinyin(text, {
@@ -66,6 +68,8 @@ function App() {
   }
 
   const handleConvert = () => {
+    if (!inputText.trim()) return
+
     if (convertType === 'pinyin') {
       setOutputText(convertToPinyin(inputText))
     } else {
@@ -81,38 +85,23 @@ function App() {
   const renderZhuyinOutput = (): ReactNode => {
     if (convertType === 'zhuyin' && Array.isArray(outputText)) {
       return (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+        <div className="flex flex-wrap gap-2" style={{ scale: textScale }}>
           {outputText.map((item, index) => (
-            <div key={index} style={{
-              display: 'flex',
-              alignItems: 'center',
-              minWidth: '30px',
-              width: '80px'
-            }}>
-              <div style={{
-                fontSize: '3rem',
-                minHeight: '20px'
-              }}>
+            <div key={index} className="flex items-center min-w-[30px] w-[80px]">
+              <div className="text-[3rem] min-h-[2rem]">
                 {item.char}
               </div>
-              <div style={{
-                display: 'flex',
+              <div className="flex items-center" style={{
                 flexDirection: item.tone === '0' ? 'column-reverse' : 'row',
-                alignItems: 'center'
               }}>
-                <div style={{
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
+                <div className="text-[1rem] font-bold text-gray-600" style={{
                   writingMode: 'vertical-rl',
                   textOrientation: 'upright'
                 }}>
                   {item.zhuyin}
                 </div>
-                <div style={{
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
-                  lineHeight: item.tone === '0' ? '1px' : '3rem',
-                  color: '#666'
+                <div className="text-gray-600 text-[1rem] font-bold" style={{
+                  lineHeight: item.tone === '0' ? '1px' : '3rem'
                 }}>
                   {item.symbol}
                 </div>
@@ -126,52 +115,86 @@ function App() {
   }
 
   return (
-    <>
-      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <h1>ㄅㄆㄇㄈ注音小幫手</h1>
-        <p>支援中文轉拼音與注音符號</p>
-      </div>
+    <main className="app-main">
+      <div className="container mx-auto pt-20 pb-20 px-4">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold">ㄅㄆㄇㄈ注音小幫手</h1>
+        </div>
 
-      <div className="card">
-        <RadioGroup defaultValue="zhuyin" onValueChange={handleModeChange}>
-          <div className="flex items-center space-x-4 mb-4">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="zhuyin" id="zhuyin" />
-              <Label htmlFor="zhuyin">轉換為注音符號</Label>
+        <div className="card">
+          <RadioGroup defaultValue="zhuyin" className="hidden" onValueChange={handleModeChange}>
+            <div className="flex items-center space-x-4 mb-4">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="zhuyin" id="zhuyin" />
+                <Label htmlFor="zhuyin">轉換為注音符號</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="pinyin" id="pinyin" />
+                <Label htmlFor="pinyin">轉換為拼音</Label>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="pinyin" id="pinyin" />
-              <Label htmlFor="pinyin">轉換為拼音</Label>
+          </RadioGroup>
+
+          <div style={{ marginBottom: '1rem' }}>
+            <Textarea
+              value={inputText}
+              placeholder="請輸入中文文字..."
+              className="w-full min-h-40 p-4 bg-white border rounded-md shadow-sm"
+              onChange={(e) => setInputText(e.target.value)}
+            />
+          </div>
+
+          <div className="flex justify-center gap-4">
+            <Button
+              className="mb-4"
+              variant="outline"
+              disabled={!inputText.trim()}
+              onClick={() => {
+                setInputText('')
+                setOutputText('')
+              }}
+            >
+              清除
+            </Button>
+            <Button className="mb-4" onClick={handleConvert}>
+              {convertType === 'zhuyin' ? '轉換為注音' : '轉換為拼音'}
+            </Button>
+          </div>
+
+          <div>
+            {/* scale control, max is 1, min is 0.7, step is 0.1, in 4 buttons: xl, lg, md, sm */}
+            <div className="flex justify-end gap-2 mb-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setTextScale(1)}
+              >
+                <ScanSearch className="size-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={textScale <= 0.7}
+                onClick={() => setTextScale(prev => Math.max(prev - 0.1, 0.7))}
+              >
+                <ZoomOut className="size-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={textScale >= 1}
+                onClick={() => setTextScale(prev => Math.min(prev + 0.1, 1))}
+              >
+                <ZoomIn className="size-4" />
+              </Button>
+            </div>
+            <div className="output-block min-h-40 p-4 border rounded-md bg-gray-100">
+              {renderZhuyinOutput()}
             </div>
           </div>
-        </RadioGroup>
-
-        <div style={{ marginBottom: '1rem' }}>
-          <Textarea
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="請輸入中文文字..."
-            style={{ width: '100%', minHeight: '100px', padding: '10px' }}
-          />
-        </div>
-
-        <Button className="mb-4" onClick={handleConvert}>
-          {convertType === 'zhuyin' ? '轉換為注音' : '轉換為拼音'}
-        </Button>
-
-        <div style={{
-          minHeight: '100px',
-          padding: '10px',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          backgroundColor: '#f9f9f9',
-          fontSize: '18px',
-          lineHeight: '1.5'
-        }}>
-          {renderZhuyinOutput()}
         </div>
       </div>
-    </>
+    </main>
   )
 }
 

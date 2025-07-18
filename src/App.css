@@ -1,16 +1,6 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.app-main {
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
+.output-block {
   font-family: ui-serif, Georgia, Cambria, Times New Roman, Times, serif;
 }
