@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { ZoomIn, ZoomOut, ScanSearch, Camera } from 'lucide-react'
+import { ZoomIn, ZoomOut, ScanSearch, Camera, BrushCleaning } from 'lucide-react'
 import { saveAs } from 'file-saver'
 import { toPng } from 'html-to-image'
 
@@ -27,6 +27,13 @@ function App() {
   const [outputText, setOutputText] = useState<OutputText>('')
   const [convertType, setConvertType] = useState<ConvertType>('zhuyin')
   const [textScale, setTextScale] = useState<number>(1)
+
+  const defaultColor = {
+    text: '#000000',
+    background: '#ffffff'
+  }
+  const [textColor, setTextColor] = useState<string>(defaultColor.text)
+  const [bgColor, setBgColor] = useState<string>(defaultColor.background)
 
   const convertToPinyin = (text: string): string => {
     const pyArr = pinyin(text, {
@@ -89,20 +96,20 @@ function App() {
       return (
         <div className="flex flex-wrap gap-2" style={{ scale: textScale }}>
           {outputText.map((item, index) => (
-            <div key={index} className="flex items-center min-w-[30px] w-[80px]">
+            <div key={index} className="flex items-center min-w-[30px] w-[80px]" style={{ color: textColor }}>
               <div className="text-[3rem] min-h-[2rem]">
                 {item.char}
               </div>
               <div className="flex items-center" style={{
                 flexDirection: item.tone === '0' ? 'column-reverse' : 'row',
               }}>
-                <div className="text-[1rem] font-bold text-gray-600" style={{
+                <div className="text-[1rem] font-bold" style={{
                   writingMode: 'vertical-rl',
                   textOrientation: 'upright'
                 }}>
                   {item.zhuyin}
                 </div>
-                <div className="text-gray-600 text-[1rem] font-bold" style={{
+                <div className="text-[1rem] font-bold" style={{
                   lineHeight: item.tone === '0' ? '1px' : '3rem'
                 }}>
                   {item.symbol}
@@ -181,40 +188,69 @@ function App() {
           </div>
 
           <div>
-            <div className="flex justify-end gap-2 mb-4">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={!outputText || typeof outputText !== 'object'}
-                onClick={handleSaveAsImage}
-              >
-                <Camera className="size-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setTextScale(1)}
-              >
-                <ScanSearch className="size-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={textScale <= 0.7}
-                onClick={() => setTextScale(prev => Math.max(prev - 0.1, 0.7))}
-              >
-                <ZoomOut className="size-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={textScale >= 1}
-                onClick={() => setTextScale(prev => Math.min(prev + 0.1, 1))}
-              >
-                <ZoomIn className="size-4" />
-              </Button>
+            <div className="flex gap-2 mb-4">
+              <div className="flex gap-2 mr-20">
+                <input
+                  type="color"
+                  value={textColor}
+                  onChange={(e) => setTextColor(e.target.value)}
+                  className="w-8 h-8 border rounded-sm cursor-pointer"
+                />
+                <input
+                  type="color"
+                  value={bgColor}
+                  onChange={(e) => setBgColor(e.target.value)}
+                  className="w-8 h-8 border rounded-sm cursor-pointer"
+                />
+                {/* reset colors */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setTextColor(defaultColor.text)
+                    setBgColor(defaultColor.background)
+                  }}
+                >
+                  <BrushCleaning className="size-4" />
+                </Button>
+              </div>
+              <div className="flex gap-2 mr-auto">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setTextScale(1)}
+                >
+                  <ScanSearch className="size-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={textScale <= 0.7}
+                  onClick={() => setTextScale(prev => Math.max(prev - 0.1, 0.7))}
+                >
+                  <ZoomOut className="size-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={textScale >= 1}
+                  onClick={() => setTextScale(prev => Math.min(prev + 0.1, 1))}
+                >
+                  <ZoomIn className="size-4" />
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={!outputText || typeof outputText !== 'object'}
+                  onClick={handleSaveAsImage}
+                >
+                  <Camera className="size-4" />
+                </Button>
+              </div>
             </div>
-            <div id="output-block" className="min-h-40 p-4 border rounded-md bg-gray-100">
+            <div id="output-block" className="min-h-40 p-4 border rounded-md" style={{ backgroundColor: bgColor }}>
               {renderZhuyinOutput()}
             </div>
           </div>
