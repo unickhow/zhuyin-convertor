@@ -8,7 +8,9 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { ZoomIn, ZoomOut, ScanSearch } from 'lucide-react'
+import { ZoomIn, ZoomOut, ScanSearch, Camera } from 'lucide-react'
+import { saveAs } from 'file-saver'
+import { toPng } from 'html-to-image'
 
 interface ZhuyinItem {
   char: string
@@ -21,7 +23,7 @@ type ConvertType = 'zhuyin' | 'pinyin'
 type OutputText = string | ZhuyinItem[]
 
 function App() {
-  const [inputText, setInputText] = useState<string>('')
+  const [inputText, setInputText] = useState<string>('很久很久以前，在一座被銀色月光輕輕撫摸的古老森林裡，住著一隻叫「小葉」的小狐狸。小葉有著柔軟的火紅尾巴和一雙像星星般閃亮的眼睛，但牠最愛做的事情，不是追蝴蝶，也不是挖蘑菇，而是…')
   const [outputText, setOutputText] = useState<OutputText>('')
   const [convertType, setConvertType] = useState<ConvertType>('zhuyin')
   const [textScale, setTextScale] = useState<number>(1)
@@ -114,6 +116,23 @@ function App() {
     return typeof outputText === 'string' ? outputText : '轉換結果會顯示在這裡...'
   }
 
+  const handleSaveAsImage = () => {
+    if (!outputText || typeof outputText !== 'object') {
+      console.error('No valid output to save as image')
+      return
+    }
+    const element = document.getElementById('output-block')
+    if (element) {
+      toPng(element)
+        .then((dataUrl) => {
+          saveAs(dataUrl, 'story_zhuyin.png')
+        })
+        .catch((error) => {
+          console.error('Error generating image:', error)
+        })
+    }
+  }
+
   return (
     <main className="app-main">
       <div className="container mx-auto pt-20 pb-20 px-4">
@@ -162,8 +181,15 @@ function App() {
           </div>
 
           <div>
-            {/* scale control, max is 1, min is 0.7, step is 0.1, in 4 buttons: xl, lg, md, sm */}
             <div className="flex justify-end gap-2 mb-4">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={!outputText || typeof outputText !== 'object'}
+                onClick={handleSaveAsImage}
+              >
+                <Camera className="size-4" />
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -188,7 +214,7 @@ function App() {
                 <ZoomIn className="size-4" />
               </Button>
             </div>
-            <div className="output-block min-h-40 p-4 border rounded-md bg-gray-100">
+            <div id="output-block" className="min-h-40 p-4 border rounded-md bg-gray-100">
               {renderZhuyinOutput()}
             </div>
           </div>
