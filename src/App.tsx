@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import '@/App.css'
 import pinyin from 'pinyin'
@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { ZoomIn, ZoomOut, ScanSearch, Camera, BrushCleaning } from 'lucide-react'
+import { ZoomIn, ZoomOut, ScanSearch, Camera, BrushCleaning, PencilRuler } from 'lucide-react'
 import { saveAs } from 'file-saver'
 import { toPng } from 'html-to-image'
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 interface ZhuyinItem {
   char: string
@@ -23,17 +24,8 @@ type ConvertType = 'zhuyin' | 'pinyin'
 type OutputText = string | ZhuyinItem[]
 
 function App() {
-  const [inputText, setInputText] = useState<string>('很久很久以前，在一座被銀色月光輕輕撫摸的古老森林裡，住著一隻叫「小葉」的小狐狸。小葉有著柔軟的火紅尾巴和一雙像星星般閃亮的眼睛，但牠最愛做的事情，不是追蝴蝶，也不是挖蘑菇，而是…')
+  const [inputText, setInputText] = useState<string>('很久很久以前，在一座被銀色月光輕輕撫摸的古老森林裡，住著一隻小狐狸。小狐狸有著柔軟的火紅尾巴和一雙像星星般閃亮的眼睛…')
   const [outputText, setOutputText] = useState<OutputText>('')
-  const [convertType, setConvertType] = useState<ConvertType>('zhuyin')
-  const [textScale, setTextScale] = useState<number>(1)
-
-  const defaultColor = {
-    text: '#000000',
-    background: '#ffffff'
-  }
-  const [textColor, setTextColor] = useState<string>(defaultColor.text)
-  const [bgColor, setBgColor] = useState<string>(defaultColor.background)
 
   const convertToPinyin = (text: string): string => {
     const pyArr = pinyin(text, {
@@ -76,6 +68,8 @@ function App() {
     })
   }
 
+  // convert type state
+  const [convertType, setConvertType] = useState<ConvertType>('zhuyin')
   const handleConvert = () => {
     if (!inputText.trim()) return
 
@@ -85,6 +79,10 @@ function App() {
       setOutputText(convertToZhuyin(inputText))
     }
   }
+  // Initial conversion on mount
+  useEffect(() => {
+    handleConvert()
+  }, [])
 
   const handleModeChange = (mode: ConvertType): void => {
     setConvertType(mode)
@@ -100,19 +98,36 @@ function App() {
               <div className="text-[3rem] min-h-[2rem]">
                 {item.char}
               </div>
-              <div className="flex items-center" style={{
-                flexDirection: item.tone === '0' ? 'column-reverse' : 'row',
-              }}>
-                <div className="text-[1rem] font-bold" style={{
-                  writingMode: 'vertical-rl',
-                  textOrientation: 'upright'
-                }}>
-                  {item.zhuyin}
+              <div className="flex items-center">
+                <div className="flex flex-col items-center justify-center">
+                  <div
+                    contentEditable={isEditable}
+                    className="text-[1rem] font-bold min-h-[2px]"
+                    style={{
+                      lineHeight: '1px'
+                    }}
+                  >
+                      {item.tone === '0' ? item.symbol : ''}
+                  </div>
+                  <div
+                    contentEditable={isEditable}
+                    className={`font-bold ${isEditable ? 'text-[1.2rem]' : 'text-[1rem]'}`}
+                    style={{
+                      writingMode: 'vertical-rl',
+                      textOrientation: 'upright'
+                    }}
+                  >
+                    {item.zhuyin}
+                  </div>
                 </div>
-                <div className="text-[1rem] font-bold" style={{
-                  lineHeight: item.tone === '0' ? '1px' : '3rem'
-                }}>
-                  {item.symbol}
+                <div
+                  contentEditable={isEditable}
+                  className="text-[1rem] font-bold min-w-[2px]"
+                  style={{
+                    lineHeight: '3rem'
+                  }}
+                >
+                    {item.tone === '0' ? '' : item.symbol}
                 </div>
               </div>
             </div>
@@ -123,8 +138,39 @@ function App() {
     return typeof outputText === 'string' ? outputText : '轉換結果會顯示在這裡...'
   }
 
+  // text scale
+  const MAX_TEXT_SCALE = 1
+  const MIN_TEXT_SCALE = 0.7
+  const STEP_TEXT_SCALE = 0.1
+  const [textScale, setTextScale] = useState<number>(MIN_TEXT_SCALE)
+  const handleTextScaleChange = (scale: number) => {
+    setTextScale(scale)
+  }
+
+  // color state
+  const DEFAULT_COLORS = {
+    text: '#000000',
+    background: '#ffffff'
+  }
+  const [textColor, setTextColor] = useState<string>(DEFAULT_COLORS.text)
+  const [bgColor, setBgColor] = useState<string>(DEFAULT_COLORS.background)
+  const handleTextColorChange = (color: string) => !isEditable && setTextColor(color)
+  const handleBgColorChange = (color: string) => !isEditable && setBgColor(color)
+  const handleColorReset = () => {
+    if (isEditable) return
+    setTextColor(DEFAULT_COLORS.text)
+    setBgColor(DEFAULT_COLORS.background)
+  }
+
+  // editable state
+  const [isEditable, setIsEditable] = useState<boolean>(false)
+  const handleEditableToggle = () => {
+    setIsEditable(!isEditable)
+  }
+
+  // download image
   const handleSaveAsImage = () => {
-    if (!outputText || typeof outputText !== 'object') {
+    if (!outputText || typeof outputText !== 'object' || isEditable) {
       console.error('No valid output to save as image')
       return
     }
@@ -177,6 +223,7 @@ function App() {
               onClick={() => {
                 setInputText('')
                 setOutputText('')
+                setIsEditable(false)
               }}
             >
               清除
@@ -187,68 +234,120 @@ function App() {
           </div>
           <hr className="block my-8" />
           <div>
-            <div className="flex flex-col items-center sm:flex-row gap-2 mb-4">
-              <div className="flex gap-2 sm:mr-20">
-                <input
-                  type="color"
-                  value={textColor}
-                  onChange={(e) => setTextColor(e.target.value)}
-                  className="w-8 h-8 border rounded-sm cursor-pointer"
-                />
-                <input
-                  type="color"
-                  value={bgColor}
-                  onChange={(e) => setBgColor(e.target.value)}
-                  className="w-8 h-8 border rounded-sm cursor-pointer"
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setTextColor(defaultColor.text)
-                    setBgColor(defaultColor.background)
-                  }}
-                >
-                  <BrushCleaning className="size-4" />
-                </Button>
-              </div>
-              <div className="flex gap-2 sm:mr-auto">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setTextScale(1)}
-                >
-                  <ScanSearch className="size-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={textScale <= 0.7}
-                  onClick={() => setTextScale(prev => Math.max(prev - 0.1, 0.7))}
-                >
-                  <ZoomOut className="size-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={textScale >= 1}
-                  onClick={() => setTextScale(prev => Math.min(prev + 0.1, 1))}
-                >
-                  <ZoomIn className="size-4" />
-                </Button>
-              </div>
+            <div className="flex flex-col items-center sm:flex-row gap-2 mb-4 relative">
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={!outputText || typeof outputText !== 'object'}
-                  onClick={handleSaveAsImage}
-                >
-                  <Camera className="size-4" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <input
+                      type="color"
+                      value={textColor}
+                      disabled={isEditable}
+                      onChange={(e) => handleTextColorChange(e.target.value)}
+                      className={`w-8 h-8 border rounded-sm cursor-pointer ${isEditable && 'opacity-50'}`}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>文字顏色</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <input
+                      type="color"
+                      value={bgColor}
+                      disabled={isEditable}
+                      onChange={(e) => handleBgColorChange(e.target.value)}
+                      className={`w-8 h-8 border rounded-sm cursor-pointer ${isEditable && 'opacity-50'}`}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>背景顏色</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={isEditable}
+                      onClick={handleColorReset}
+                    >
+                      <BrushCleaning className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>重置顏色</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={isEditable ? 'bg-gray-600 text-white' : ''}
+                      onClick={handleEditableToggle}
+                    >
+                      <PencilRuler className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>編輯注音</TooltipContent>
+                </Tooltip>
+              </div>
+              <div className="flex gap-2 sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => { handleTextScaleChange(1) }}
+                    >
+                      <ScanSearch className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>重置縮放</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={textScale <= MIN_TEXT_SCALE}
+                      onClick={() => { handleTextScaleChange(Math.max(textScale - STEP_TEXT_SCALE, MIN_TEXT_SCALE)) }}
+                    >
+                      <ZoomOut className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>縮小</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={textScale >= MAX_TEXT_SCALE}
+                      onClick={() => { handleTextScaleChange(Math.min(textScale + STEP_TEXT_SCALE, MAX_TEXT_SCALE)) }}
+                    >
+                      <ZoomIn className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>放大</TooltipContent>
+                </Tooltip>
+              </div>
+              <div className="flex gap-2 sm:ml-auto">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={!outputText || typeof outputText !== 'object' || isEditable}
+                      onClick={handleSaveAsImage}
+                    >
+                      <Camera className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>儲存為圖片</TooltipContent>
+                </Tooltip>
               </div>
             </div>
-            <div id="output-block" className="min-h-40 p-4 border rounded-md" style={{ backgroundColor: bgColor }}>
+            <div
+              id="output-block"
+              className={`min-h-40 p-4 border rounded-md ${isEditable && 'editing-mode'}`}
+              style={{ backgroundColor: bgColor }}
+            >
               {renderZhuyinOutput()}
             </div>
           </div>
