@@ -1,26 +1,37 @@
 import { useState } from 'react'
+import type { ReactNode } from 'react'
 import './App.css'
 import pinyin from 'pinyin'
 import zhuyinMap from './map/zhuyin.json'
 import toneSymbols from './map/toneSymbols.json'
 
-function App () {
-  const [inputText, setInputText] = useState('')
-  const [outputText, setOutputText] = useState('')
-  const [convertType, setConvertType] = useState('zhuyin')
+interface ZhuyinItem {
+  char: string
+  zhuyin: string
+  tone: string
+  symbol: string
+}
 
-  const convertToPinyin = (text) => {
+type ConvertType = 'zhuyin' | 'pinyin'
+type OutputText = string | ZhuyinItem[]
+
+function App() {
+  const [inputText, setInputText] = useState<string>('')
+  const [outputText, setOutputText] = useState<OutputText>('')
+  const [convertType, setConvertType] = useState<ConvertType>('zhuyin')
+
+  const convertToPinyin = (text: string): string => {
     const pyArr = pinyin(text, {
       style: pinyin.STYLE_TONE2,
     })
     return pyArr.map(item => item[0]).join(' ')
   }
 
-  const isChinese = (char) => {
+  const isChinese = (char: string): boolean => {
     return /[\u4e00-\u9fff]/.test(char)
   }
 
-  const convertToZhuyin = (text) => {
+  const convertToZhuyin = (text: string): ZhuyinItem[] => {
     const pyArr = pinyin(text, {
       style: pinyin.STYLE_TONE2,
     })
@@ -31,8 +42,8 @@ function App () {
         const toneNumber = pinyinWithTone.match(/\d/) ? pinyinWithTone.match(/\d/)[0] : '0'
         const pinyinWithoutTone = pinyinWithTone.replace(/\d/g, '')
 
-        const zhuyinBase = zhuyinMap[pinyinWithoutTone] || pinyinWithoutTone
-        const toneSymbol = toneSymbols[toneNumber] || ''
+        const zhuyinBase = (zhuyinMap as Record<string, string>)[pinyinWithoutTone] || pinyinWithoutTone
+        const toneSymbol = (toneSymbols as Record<string, string>)[toneNumber] || ''
 
         return {
           char: char,
@@ -58,12 +69,12 @@ function App () {
     }
   }
 
-  const handleModeChange = (mode) => {
+  const handleModeChange = (mode: ConvertType): void => {
     setConvertType(mode)
     setOutputText('')
   }
 
-  const renderZhuyinOutput = () => {
+  const renderZhuyinOutput = (): ReactNode => {
     if (convertType === 'zhuyin' && Array.isArray(outputText)) {
       return (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -123,7 +134,7 @@ function App () {
               type="radio"
               value="zhuyin"
               checked={convertType === 'zhuyin'}
-              onChange={(e) => handleModeChange(e.target.value)}
+              onChange={(e) => handleModeChange(e.target.value as ConvertType)}
             />
             轉換為注音符號
           </label>
@@ -132,7 +143,7 @@ function App () {
               type="radio"
               value="pinyin"
               checked={convertType === 'pinyin'}
-              onChange={(e) => handleModeChange(e.target.value)}
+              onChange={(e) => handleModeChange(e.target.value as ConvertType)}
             />
             轉換為拼音
           </label>
