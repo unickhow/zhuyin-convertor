@@ -12,6 +12,7 @@ import { ZoomIn, ZoomOut, ScanSearch, Camera, BrushCleaning, PencilRuler } from 
 import { saveAs } from 'file-saver'
 import { toPng } from 'html-to-image'
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { Footer } from "@/components/footer"
 
 interface ZhuyinItem {
   char: string
@@ -187,173 +188,177 @@ function App() {
   }
 
   return (
-    <main className="app-main">
-      <div className="container mx-auto pt-20 pb-20 px-4">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold">ㄅㄆㄇㄈ注音小幫手</h1>
+    <div className="min-h-screen flex flex-col">
+      <main className="app-main flex-1">
+        <div className="container mx-auto pt-20 pb-20 px-4">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold">ㄅㄆㄇㄈ注音小幫手</h1>
+          </div>
+
+          <div className="card">
+            <RadioGroup defaultValue="zhuyin" className="hidden" onValueChange={handleModeChange}>
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="zhuyin" id="zhuyin" />
+                  <Label htmlFor="zhuyin">轉換為注音符號</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="pinyin" id="pinyin" />
+                  <Label htmlFor="pinyin">轉換為拼音</Label>
+                </div>
+              </div>
+            </RadioGroup>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <Textarea
+                value={inputText}
+                placeholder="請輸入中文文字..."
+                className="w-full min-h-40 p-4 bg-white border rounded-md"
+                onChange={(e) => setInputText(e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-center gap-4 mb-4">
+              <Button
+                variant="outline"
+                disabled={!inputText.trim()}
+                onClick={() => {
+                  setInputText('')
+                  setOutputText('')
+                  setIsEditable(false)
+                }}
+              >
+                清除
+              </Button>
+              <Button onClick={handleConvert}>
+                {convertType === 'zhuyin' ? '轉換為注音' : '轉換為拼音'}
+              </Button>
+            </div>
+            <hr className="block my-8" />
+            <div>
+              <div className="flex flex-col items-center sm:flex-row gap-2 mb-4 relative">
+                <div className="flex gap-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <input
+                        type="color"
+                        value={textColor}
+                        disabled={isEditable}
+                        onChange={(e) => handleTextColorChange(e.target.value)}
+                        className={`w-8 h-8 border rounded-sm cursor-pointer ${isEditable && 'opacity-50'}`}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>文字顏色</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <input
+                        type="color"
+                        value={bgColor}
+                        disabled={isEditable}
+                        onChange={(e) => handleBgColorChange(e.target.value)}
+                        className={`w-8 h-8 border rounded-sm cursor-pointer ${isEditable && 'opacity-50'}`}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>背景顏色</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={isEditable}
+                        onClick={handleColorReset}
+                      >
+                        <BrushCleaning className="size-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>重置顏色</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={isEditable ? 'bg-gray-600 text-white' : ''}
+                        onClick={handleEditableToggle}
+                      >
+                        <PencilRuler className="size-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>編輯注音</TooltipContent>
+                  </Tooltip>
+                </div>
+                <div className="flex gap-2 sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => { handleTextScaleChange(1) }}
+                      >
+                        <ScanSearch className="size-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>重置縮放</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={textScale <= MIN_TEXT_SCALE}
+                        onClick={() => { handleTextScaleChange(Math.max(textScale - STEP_TEXT_SCALE, MIN_TEXT_SCALE)) }}
+                      >
+                        <ZoomOut className="size-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>縮小</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={textScale >= MAX_TEXT_SCALE}
+                        onClick={() => { handleTextScaleChange(Math.min(textScale + STEP_TEXT_SCALE, MAX_TEXT_SCALE)) }}
+                      >
+                        <ZoomIn className="size-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>放大</TooltipContent>
+                  </Tooltip>
+                </div>
+                <div className="flex gap-2 sm:ml-auto">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={!outputText || typeof outputText !== 'object' || isEditable}
+                        onClick={handleSaveAsImage}
+                      >
+                        <Camera className="size-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>儲存為圖片</TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+              <div
+                id="output-block"
+                className={`min-h-40 p-4 border rounded-md ${isEditable && 'editing-mode'}`}
+                style={{ backgroundColor: bgColor }}
+              >
+                {renderZhuyinOutput()}
+              </div>
+              <p className="text-center mt-4 text-gray-500 text-sm">請使用電腦版操作以獲得更佳的體驗</p>
+            </div>
+          </div>
         </div>
-
-        <div className="card">
-          <RadioGroup defaultValue="zhuyin" className="hidden" onValueChange={handleModeChange}>
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="zhuyin" id="zhuyin" />
-                <Label htmlFor="zhuyin">轉換為注音符號</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="pinyin" id="pinyin" />
-                <Label htmlFor="pinyin">轉換為拼音</Label>
-              </div>
-            </div>
-          </RadioGroup>
-
-          <div style={{ marginBottom: '1rem' }}>
-            <Textarea
-              value={inputText}
-              placeholder="請輸入中文文字..."
-              className="w-full min-h-40 p-4 bg-white border rounded-md"
-              onChange={(e) => setInputText(e.target.value)}
-            />
-          </div>
-
-          <div className="flex justify-center gap-4 mb-4">
-            <Button
-              variant="outline"
-              disabled={!inputText.trim()}
-              onClick={() => {
-                setInputText('')
-                setOutputText('')
-                setIsEditable(false)
-              }}
-            >
-              清除
-            </Button>
-            <Button onClick={handleConvert}>
-              {convertType === 'zhuyin' ? '轉換為注音' : '轉換為拼音'}
-            </Button>
-          </div>
-          <hr className="block my-8" />
-          <div>
-            <div className="flex flex-col items-center sm:flex-row gap-2 mb-4 relative">
-              <div className="flex gap-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <input
-                      type="color"
-                      value={textColor}
-                      disabled={isEditable}
-                      onChange={(e) => handleTextColorChange(e.target.value)}
-                      className={`w-8 h-8 border rounded-sm cursor-pointer ${isEditable && 'opacity-50'}`}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>文字顏色</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <input
-                      type="color"
-                      value={bgColor}
-                      disabled={isEditable}
-                      onChange={(e) => handleBgColorChange(e.target.value)}
-                      className={`w-8 h-8 border rounded-sm cursor-pointer ${isEditable && 'opacity-50'}`}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>背景顏色</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={isEditable}
-                      onClick={handleColorReset}
-                    >
-                      <BrushCleaning className="size-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>重置顏色</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className={isEditable ? 'bg-gray-600 text-white' : ''}
-                      onClick={handleEditableToggle}
-                    >
-                      <PencilRuler className="size-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>編輯注音</TooltipContent>
-                </Tooltip>
-              </div>
-              <div className="flex gap-2 sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => { handleTextScaleChange(1) }}
-                    >
-                      <ScanSearch className="size-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>重置縮放</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={textScale <= MIN_TEXT_SCALE}
-                      onClick={() => { handleTextScaleChange(Math.max(textScale - STEP_TEXT_SCALE, MIN_TEXT_SCALE)) }}
-                    >
-                      <ZoomOut className="size-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>縮小</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={textScale >= MAX_TEXT_SCALE}
-                      onClick={() => { handleTextScaleChange(Math.min(textScale + STEP_TEXT_SCALE, MAX_TEXT_SCALE)) }}
-                    >
-                      <ZoomIn className="size-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>放大</TooltipContent>
-                </Tooltip>
-              </div>
-              <div className="flex gap-2 sm:ml-auto">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={!outputText || typeof outputText !== 'object' || isEditable}
-                      onClick={handleSaveAsImage}
-                    >
-                      <Camera className="size-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>儲存為圖片</TooltipContent>
-                </Tooltip>
-              </div>
-            </div>
-            <div
-              id="output-block"
-              className={`min-h-40 p-4 border rounded-md ${isEditable && 'editing-mode'}`}
-              style={{ backgroundColor: bgColor }}
-            >
-              {renderZhuyinOutput()}
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+      </main>
+      <Footer className="mt-auto" />
+    </div>
   )
 }
 
