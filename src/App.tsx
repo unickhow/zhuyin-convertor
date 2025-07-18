@@ -165,14 +165,13 @@ function App() {
             <Textarea
               value={inputText}
               placeholder="請輸入中文文字..."
-              className="w-full min-h-40 p-4 bg-white border rounded-md shadow-sm"
+              className="w-full min-h-40 p-4 bg-white border rounded-md"
               onChange={(e) => setInputText(e.target.value)}
             />
           </div>
 
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-4 mb-4">
             <Button
-              className="mb-4"
               variant="outline"
               disabled={!inputText.trim()}
               onClick={() => {
@@ -182,14 +181,14 @@ function App() {
             >
               清除
             </Button>
-            <Button className="mb-4" onClick={handleConvert}>
+            <Button onClick={handleConvert}>
               {convertType === 'zhuyin' ? '轉換為注音' : '轉換為拼音'}
             </Button>
           </div>
-
+          <hr className="block my-8" />
           <div>
-            <div className="flex gap-2 mb-4">
-              <div className="flex gap-2 mr-20">
+            <div className="flex flex-col items-center sm:flex-row gap-2 mb-4">
+              <div className="flex gap-2 sm:mr-20">
                 <input
                   type="color"
                   value={textColor}
@@ -202,7 +201,6 @@ function App() {
                   onChange={(e) => setBgColor(e.target.value)}
                   className="w-8 h-8 border rounded-sm cursor-pointer"
                 />
-                {/* reset colors */}
                 <Button
                   variant="outline"
                   size="sm"
@@ -214,7 +212,7 @@ function App() {
                   <BrushCleaning className="size-4" />
                 </Button>
               </div>
-              <div className="flex gap-2 mr-auto">
+              <div className="flex gap-2 sm:mr-auto">
                 <Button
                   variant="outline"
                   size="sm"
