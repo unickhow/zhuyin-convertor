@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
-import './App.css'
+import '@/App.css'
 import pinyin from 'pinyin'
-import zhuyinMap from './map/zhuyin.json'
-import toneSymbols from './map/toneSymbols.json'
+import zhuyinMap from '@/map/zhuyin.json'
+import toneSymbols from '@/map/toneSymbols.json'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 interface ZhuyinItem {
   char: string
@@ -39,11 +43,11 @@ function App() {
     return text.split('').map((char, index) => {
       if (isChinese(char) && pyArr[index]) {
         const pinyinWithTone = pyArr[index][0]
-        const toneNumber = pinyinWithTone.match(/\d/) ? pinyinWithTone.match(/\d/)[0] : '0'
+        const toneNumber = pinyinWithTone.match(/\d/)?.[0] || '0'
         const pinyinWithoutTone = pinyinWithTone.replace(/\d/g, '')
 
         const zhuyinBase = (zhuyinMap as Record<string, string>)[pinyinWithoutTone] || pinyinWithoutTone
-        const toneSymbol = (toneSymbols as Record<string, string>)[toneNumber] || ''
+        const toneSymbol = (toneSymbols as unknown as Record<string, string>)[toneNumber] || ''
 
         return {
           char: char,
@@ -82,7 +86,8 @@ function App() {
             <div key={index} style={{
               display: 'flex',
               alignItems: 'center',
-              minWidth: '30px'
+              minWidth: '30px',
+              width: '80px'
             }}>
               <div style={{
                 fontSize: '3rem',
@@ -117,7 +122,7 @@ function App() {
         </div>
       )
     }
-    return outputText || '轉換結果會顯示在這裡...'
+    return typeof outputText === 'string' ? outputText : '轉換結果會顯示在這裡...'
   }
 
   return (
@@ -128,29 +133,21 @@ function App() {
       </div>
 
       <div className="card">
-        <div style={{ marginBottom: '1rem' }}>
-          <label>
-            <input
-              type="radio"
-              value="zhuyin"
-              checked={convertType === 'zhuyin'}
-              onChange={(e) => handleModeChange(e.target.value as ConvertType)}
-            />
-            轉換為注音符號
-          </label>
-          <label style={{ marginLeft: '1rem' }}>
-            <input
-              type="radio"
-              value="pinyin"
-              checked={convertType === 'pinyin'}
-              onChange={(e) => handleModeChange(e.target.value as ConvertType)}
-            />
-            轉換為拼音
-          </label>
-        </div>
+        <RadioGroup defaultValue="zhuyin" onValueChange={handleModeChange}>
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="zhuyin" id="zhuyin" />
+              <Label htmlFor="zhuyin">轉換為注音符號</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="pinyin" id="pinyin" />
+              <Label htmlFor="pinyin">轉換為拼音</Label>
+            </div>
+          </div>
+        </RadioGroup>
 
         <div style={{ marginBottom: '1rem' }}>
-          <textarea
+          <Textarea
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder="請輸入中文文字..."
@@ -158,9 +155,9 @@ function App() {
           />
         </div>
 
-        <button onClick={handleConvert} style={{ marginBottom: '1rem' }}>
+        <Button className="mb-4" onClick={handleConvert}>
           {convertType === 'zhuyin' ? '轉換為注音' : '轉換為拼音'}
-        </button>
+        </Button>
 
         <div style={{
           minHeight: '100px',
