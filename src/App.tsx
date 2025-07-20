@@ -10,6 +10,7 @@ import { TextInput } from '@/components/TextInput'
 import { OutputDisplay } from '@/components/OutputDisplay'
 import { ControlPanel } from '@/components/ControlPanel'
 import { CONSTANTS } from '@/lib/utils'
+import { Fonts } from '@/types'
 
 function App () {
   const {
@@ -22,19 +23,29 @@ function App () {
     handleClear
   } = useTextConverter('很久很久以前，在一座被銀色月光輕輕撫摸的古老森林裡，住著一隻小狐狸。小狐狸有著柔軟的火紅尾巴和一雙像星星般閃亮的眼睛…')
 
-  const [textScale, setTextScale] = useState<number>(CONSTANTS.MAX_TEXT_SCALE)
   const [textColor, setTextColor] = useState<string>(CONSTANTS.DEFAULT_TEXT_COLOR)
-  const [bgColor, setBgColor] = useState<string>(CONSTANTS.DEFAULT_BG_COLOR)
-  const [isEditing, setIsEditing] = useState<boolean>(false)
-
   const handleTextColorChange = (color: string) => !isEditing && setTextColor(color)
+
+  const [bgColor, setBgColor] = useState<string>(CONSTANTS.DEFAULT_BG_COLOR)
   const handleBgColorChange = (color: string) => !isEditing && setBgColor(color)
   const handleColorReset = () => {
     if (isEditing) return
     setTextColor(CONSTANTS.DEFAULT_TEXT_COLOR)
     setBgColor(CONSTANTS.DEFAULT_BG_COLOR)
   }
+  const [textFont, setTextFont] = useState<typeof Fonts[keyof typeof Fonts]['key']>(CONSTANTS.DEFAULT_FONT)
+  const handleTextFontChange = (font: string) => {
+    if (isEditing) return
+    setTextFont(font as typeof Fonts[keyof typeof Fonts]['key'])
+  }
 
+  const [textScale, setTextScale] = useState<number>(CONSTANTS.MAX_TEXT_SCALE)
+  const handleTextScaleChange = (scale: number) => {
+    if (scale < CONSTANTS.MIN_TEXT_SCALE || scale > CONSTANTS.MAX_TEXT_SCALE) return
+    setTextScale(scale)
+  }
+
+  const [isEditing, setIsEditing] = useState<boolean>(false)
   const handleEditableToggle = () => {
     setIsEditing(!isEditing)
   }
@@ -103,11 +114,13 @@ function App () {
                 textColor={textColor}
                 bgColor={bgColor}
                 textScale={textScale}
+                textFont={textFont}
                 isEditing={isEditing}
                 outputText={outputText}
                 onTextColorChange={handleTextColorChange}
                 onBgColorChange={handleBgColorChange}
-                onTextScaleChange={setTextScale}
+                onTextFontChange={handleTextFontChange}
+                onTextScaleChange={handleTextScaleChange}
                 onEditableToggle={handleEditableToggle}
                 onColorReset={handleColorReset}
                 onSaveAsImage={handleSaveAsImage}
@@ -117,6 +130,7 @@ function App () {
                 convertType={convertType}
                 textScale={textScale}
                 textColor={textColor}
+                textFont={textFont}
                 bgColor={bgColor}
                 isEditing={isEditing}
               />

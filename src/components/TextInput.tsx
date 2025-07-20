@@ -1,14 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { ConvertType } from '@/hooks/useTextConverter'
-
-interface TextInputProps {
-  inputText: string
-  setInputText: (text: string) => void
-  convertType: ConvertType
-  onConvert: () => void
-  onClear: () => void
-}
+import { TextInputProps } from '@/types'
 
 export const TextInput = ({
   inputText,

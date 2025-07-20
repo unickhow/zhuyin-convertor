@@ -2,16 +2,7 @@ import { useState } from 'react'
 import pinyin from 'pinyin'
 import zhuyinMap from '@/map/zhuyin.json'
 import toneSymbols from '@/map/toneSymbols.json'
-
-export interface ZhuyinItem {
-  char: string
-  zhuyin: string
-  tone: string
-  symbol: string
-}
-
-export type ConvertType = 'zhuyin' | 'pinyin'
-export type OutputText = string | ZhuyinItem[]
+import type { ZhuyinItem, ConvertType, OutputText } from '@/types'
 
 export const useTextConverter = (initialText: string = '') => {
   const [inputText, setInputText] = useState<string>(initialText)

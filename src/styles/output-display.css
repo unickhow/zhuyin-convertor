@@ -1,0 +1,35 @@
+#output-block {
+  &.editing-mode {
+    background-color: #fff;
+    background-image:
+        linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}
+
+.zhuyin-renderer {
+  > .hr-breaker {
+    @apply w-full h-[3rem];
+  }
+  > .hr-breaker:not(.hr-breaker + .hr-breaker) {
+    @apply h-0;
+  }
+}
+
+/* output fonts options */
+.default-font {
+  font-family: ui-serif, Georgia, Cambria, Times New Roman, Times, serif;
+}
+.microsoft-jhenghei {
+  font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+}
+.dfkai-sb {
+  font-family: "DFKai-SB", "標楷體", serif;
+}
+.heiti-tc {
+  font-family: "Heiti TC", "黑體-繁", sans-serif;
+}
+.noto-sans {
+  font-family: "Noto Sans CJK TC", "Noto Sans CJK SC", sans-serif;
+}

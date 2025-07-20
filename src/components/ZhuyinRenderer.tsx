@@ -1,4 +1,4 @@
-import { ZhuyinItem } from '@/hooks/useTextConverter'
+import { ZhuyinItem } from '@/types'
 
 interface ZhuyinRendererProps {
   items: ZhuyinItem[]

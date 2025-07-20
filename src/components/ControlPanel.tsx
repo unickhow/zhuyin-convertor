@@ -1,39 +1,37 @@
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { ZoomIn, ZoomOut, ScanSearch, Camera, BrushCleaning, PencilRuler } from 'lucide-react'
-import { OutputText } from '@/hooks/useTextConverter'
 import { CONSTANTS } from '@/lib/utils'
+import { Fonts, type ControlPanelProps } from '@/types'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
-interface ControlPanelProps {
-  textColor: string
-  bgColor: string
-  textScale: number
-  isEditing: boolean
-  outputText: OutputText
-  onTextColorChange: (color: string) => void
-  onBgColorChange: (color: string) => void
-  onTextScaleChange: (scale: number) => void
-  onEditableToggle: () => void
-  onColorReset: () => void
-  onSaveAsImage: () => void
-}
 
 export const ControlPanel = ({
   textColor,
   bgColor,
   textScale,
+  textFont,
   isEditing,
   outputText,
   onTextColorChange,
   onBgColorChange,
+  onTextFontChange,
   onTextScaleChange,
   onEditableToggle,
   onColorReset,
   onSaveAsImage
 }: ControlPanelProps) => {
   return (
-    <div className="flex flex-col items-center sm:flex-row gap-2 sticky top-0 z-10 py-4 bg-white">
-      <div className="flex gap-2">
+    <div className="flex flex-col items-center justify-between sm:flex-row gap-2 sticky top-0 z-10 py-4 bg-white">
+      <div className="flex items-center gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
             <input
@@ -84,8 +82,24 @@ export const ControlPanel = ({
           </TooltipTrigger>
           <TooltipContent>編輯注音</TooltipContent>
         </Tooltip>
+
+        <Select onValueChange={onTextFontChange} value={textFont} disabled={isEditing}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="選擇字體" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>字體選擇</SelectLabel>
+              {Object.values(Fonts).map((font) => (
+                <SelectItem key={font.key} value={font.key}>
+                  {font.value}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
-      <div className="flex gap-2 sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2">
+      <div className="flex items-center gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -124,8 +138,6 @@ export const ControlPanel = ({
           </TooltipTrigger>
           <TooltipContent>放大</TooltipContent>
         </Tooltip>
-      </div>
-      <div className="flex gap-2 sm:ml-auto">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button

@@ -1,20 +1,12 @@
-import { OutputText, ConvertType } from '@/hooks/useTextConverter'
+import type { OutputDisplayProps } from '@/types'
 import { ZhuyinRenderer } from './ZhuyinRenderer'
-
-interface OutputDisplayProps {
-  outputText: OutputText
-  convertType: ConvertType
-  textScale: number
-  textColor: string
-  bgColor: string
-  isEditing: boolean
-}
 
 export const OutputDisplay = ({
   outputText,
   convertType,
   textScale,
   textColor,
+  textFont,
   bgColor,
   isEditing
 }: OutputDisplayProps) => {
@@ -35,7 +27,7 @@ export const OutputDisplay = ({
   return (
     <div
       id="output-block"
-      className={`min-h-40 p-4 border rounded-md ${isEditing && 'editing-mode'}`}
+      className={`min-h-40 p-4 border rounded-md ${isEditing && 'editing-mode'} ${textFont}`}
       style={{ backgroundColor: bgColor }}
     >
       {renderOutput()}
