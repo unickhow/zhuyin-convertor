@@ -21,7 +21,7 @@ export const OutputDisplay = ({
         />
       )
     }
-    return typeof outputText === 'string' ? outputText : '轉換結果會顯示在這裡...'
+    return typeof outputText === 'string' ? outputText : '標記結果會顯示在這裡...'
   }
 
   return (

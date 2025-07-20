@@ -30,7 +30,7 @@ export const TextInput = ({
           清除
         </Button>
         <Button onClick={onConvert}>
-          {convertType === 'zhuyin' ? '轉換為注音' : '轉換為拼音'}
+          {convertType === 'zhuyin' ? '標記注音' : '標記拼音'}
         </Button>
       </div>
     </>

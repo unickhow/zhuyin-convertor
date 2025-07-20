@@ -84,7 +84,7 @@ function App () {
         <div className="container mx-auto pt-20 pb-20 px-4">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold">ㄅㄆㄇㄈ注音小幫手</h1>
-            <p className="text-center mt-4 text-gray-500 text-sm">請使用電腦版操作以獲得更佳的體驗</p>
+            <p className="text-center mt-4 text-gray-500 text-sm">👀 請使用電腦版開啟以獲得更好的操作體驗</p>
           </div>
 
           <div className="card">
@@ -92,11 +92,11 @@ function App () {
               <div className="flex items-center space-x-4 mb-4">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="zhuyin" id="zhuyin" />
-                  <Label htmlFor="zhuyin">轉換為注音符號</Label>
+                  <Label htmlFor="zhuyin">標記注音符號</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="pinyin" id="pinyin" />
-                  <Label htmlFor="pinyin">轉換為拼音</Label>
+                  <Label htmlFor="pinyin">標記拼音</Label>
                 </div>
               </div>
             </RadioGroup>
@@ -109,6 +109,7 @@ function App () {
               onClear={handleClearWithEditMode}
             />
             <hr className="block my-8" />
+            <p className="text-center text-sm text-gray-500 mb-2">📝 現階段中文破音字不易維護，如有需求請開啟<u className="cursor-pointer transition hover:text-gray-900" onClick={handleEditableToggle}>編輯注音</u>模式，修正後再進行快照</p>
             <div>
               <ControlPanel
                 textColor={textColor}
