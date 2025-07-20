@@ -23,6 +23,7 @@ export const TextInput = ({
         <Textarea
           value={inputText}
           placeholder="請輸入中文文字..."
+          maxLength={1000}
           className="w-full min-h-40 p-4 bg-white border rounded-md"
           onChange={(e) => setInputText(e.target.value)}
         />

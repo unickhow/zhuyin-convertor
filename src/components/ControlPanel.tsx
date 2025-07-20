@@ -32,7 +32,7 @@ export const ControlPanel = ({
   onSaveAsImage
 }: ControlPanelProps) => {
   return (
-    <div className="flex flex-col items-center sm:flex-row gap-2 mb-4 relative">
+    <div className="flex flex-col items-center sm:flex-row gap-2 sticky top-0 z-10 py-4 bg-white">
       <div className="flex gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
