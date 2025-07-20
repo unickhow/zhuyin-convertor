@@ -30,33 +30,34 @@ export const useTextConverter = (initialText: string = '') => {
   }
 
   const convertToZhuyin = (text: string): ZhuyinItem[] => {
-    const pyArr = pinyin(text, {
-      style: pinyin.STYLE_TONE2,
-    })
+    const zhuyinItems: ZhuyinItem[] = []
 
-    return text.split('').map((char, index) => {
-      if (isChinese(char) && pyArr[index]) {
-        const pinyinWithTone = pyArr[index][0]
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i]
+      if (isChinese(char)) {
+        const pinyinWithTone = pinyin(char, { style: pinyin.STYLE_TONE2 })[0][0]
         const toneNumber = pinyinWithTone.match(/\d/)?.[0] || '0'
         const pinyinWithoutTone = pinyinWithTone.replace(/\d/g, '')
 
         const zhuyinBase = (zhuyinMap as Record<string, string>)[pinyinWithoutTone] || pinyinWithoutTone
         const toneSymbol = (toneSymbols as unknown as Record<string, string>)[toneNumber] || ''
 
-        return {
+        zhuyinItems.push({
           char: char,
           zhuyin: zhuyinBase,
           tone: toneNumber,
           symbol: toneSymbol
-        }
+        })
+      } else {
+        zhuyinItems.push({
+          char: char,
+          zhuyin: '',
+          tone: '0',
+          symbol: ''
+        })
       }
-      return {
-        char: char,
-        zhuyin: '',
-        tone: '0',
-        symbol: ''
-      }
-    })
+    }
+    return zhuyinItems
   }
 
   const handleConvert = () => {

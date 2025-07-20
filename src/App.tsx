@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { saveAs } from 'file-saver'
 import { toPng } from 'html-to-image'
-import { Footer } from '@/components/footer'
+import { AppFooter } from '@/components/AppFooter'
 import { useTextConverter } from '@/hooks/useTextConverter'
 import { TextInput } from '@/components/TextInput'
 import { OutputDisplay } from '@/components/OutputDisplay'
@@ -124,7 +124,7 @@ function App () {
           </div>
         </div>
       </main>
-      <Footer className="mt-auto" />
+      <AppFooter className="mt-auto" />
     </div>
   )
 }

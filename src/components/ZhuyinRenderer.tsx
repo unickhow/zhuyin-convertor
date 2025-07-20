@@ -16,7 +16,7 @@ export const ZhuyinRenderer = ({
   return (
     <div className="flex flex-wrap gap-2" style={{ scale: textScale }}>
       {items.map((item, index) => (
-        <div key={index} className="flex items-center min-w-[30px] w-[80px]" style={{ color: textColor }}>
+        <div key={`zhuyin-item-${index}-${item.char}`} className="flex items-center min-w-[30px] w-[80px]" style={{ color: textColor }}>
           <div className={`text-[3rem] min-h-[2rem] transition-opacity ${isEditable && 'opacity-30'}`}>
             {item.char}
           </div>

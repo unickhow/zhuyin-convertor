@@ -6,7 +6,7 @@ interface FooterProps extends React.HTMLAttributes<HTMLElement> {
   children?: React.ReactNode
 }
 
-const Footer = React.forwardRef<HTMLElement, FooterProps>(
+const AppFooter = React.forwardRef<HTMLElement, FooterProps>(
   ({ className, children, ...props }, ref) => {
     return (
       <footer
@@ -31,6 +31,6 @@ const Footer = React.forwardRef<HTMLElement, FooterProps>(
     )
   }
 )
-Footer.displayName = "Footer"
+AppFooter.displayName = 'AppFooter'
 
-export { Footer }
+export { AppFooter }
