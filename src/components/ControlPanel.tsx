@@ -8,7 +8,7 @@ interface ControlPanelProps {
   textColor: string
   bgColor: string
   textScale: number
-  isEditable: boolean
+  isEditing: boolean
   outputText: OutputText
   onTextColorChange: (color: string) => void
   onBgColorChange: (color: string) => void
@@ -22,7 +22,7 @@ export const ControlPanel = ({
   textColor,
   bgColor,
   textScale,
-  isEditable,
+  isEditing,
   outputText,
   onTextColorChange,
   onBgColorChange,
@@ -39,9 +39,9 @@ export const ControlPanel = ({
             <input
               type="color"
               value={textColor}
-              disabled={isEditable}
+              disabled={isEditing}
               onChange={(e) => onTextColorChange(e.target.value)}
-              className={`w-8 h-8 border rounded-sm cursor-pointer ${isEditable && 'opacity-50'}`}
+              className={`w-8 h-8 border rounded-sm cursor-pointer ${isEditing && 'opacity-50'}`}
             />
           </TooltipTrigger>
           <TooltipContent>文字顏色</TooltipContent>
@@ -51,9 +51,9 @@ export const ControlPanel = ({
             <input
               type="color"
               value={bgColor}
-              disabled={isEditable}
+              disabled={isEditing}
               onChange={(e) => onBgColorChange(e.target.value)}
-              className={`w-8 h-8 border rounded-sm cursor-pointer ${isEditable && 'opacity-50'}`}
+              className={`w-8 h-8 border rounded-sm cursor-pointer ${isEditing && 'opacity-50'}`}
             />
           </TooltipTrigger>
           <TooltipContent>背景顏色</TooltipContent>
@@ -63,7 +63,7 @@ export const ControlPanel = ({
             <Button
               variant="outline"
               size="sm"
-              disabled={isEditable}
+              disabled={isEditing}
               onClick={onColorReset}
             >
               <BrushCleaning className="size-4" />
@@ -76,7 +76,7 @@ export const ControlPanel = ({
             <Button
               variant="outline"
               size="sm"
-              className={isEditable ? 'bg-gray-600 text-white' : ''}
+              className={isEditing ? 'bg-gray-600 text-white' : ''}
               onClick={onEditableToggle}
             >
               <PencilRuler className="size-4" />
@@ -131,7 +131,7 @@ export const ControlPanel = ({
             <Button
               variant="outline"
               size="sm"
-              disabled={!outputText || typeof outputText !== 'object' || isEditable}
+              disabled={!outputText || typeof outputText !== 'object' || isEditing}
               onClick={onSaveAsImage}
             >
               <Camera className="size-4" />

@@ -19,3 +19,12 @@ html, body {
 button {
   cursor: pointer;
 }
+
+.zhuyin-renderer {
+  > .hr-breaker {
+    @apply w-full h-[3rem];
+  }
+  > .hr-breaker:not(.hr-breaker + .hr-breaker) {
+    @apply h-0;
+  }
+}

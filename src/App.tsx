@@ -25,28 +25,28 @@ function App () {
   const [textScale, setTextScale] = useState<number>(CONSTANTS.MAX_TEXT_SCALE)
   const [textColor, setTextColor] = useState<string>(CONSTANTS.DEFAULT_TEXT_COLOR)
   const [bgColor, setBgColor] = useState<string>(CONSTANTS.DEFAULT_BG_COLOR)
-  const [isEditable, setIsEditable] = useState<boolean>(false)
+  const [isEditing, setIsEditing] = useState<boolean>(false)
 
-  const handleTextColorChange = (color: string) => !isEditable && setTextColor(color)
-  const handleBgColorChange = (color: string) => !isEditable && setBgColor(color)
+  const handleTextColorChange = (color: string) => !isEditing && setTextColor(color)
+  const handleBgColorChange = (color: string) => !isEditing && setBgColor(color)
   const handleColorReset = () => {
-    if (isEditable) return
+    if (isEditing) return
     setTextColor(CONSTANTS.DEFAULT_TEXT_COLOR)
     setBgColor(CONSTANTS.DEFAULT_BG_COLOR)
   }
 
   const handleEditableToggle = () => {
-    setIsEditable(!isEditable)
+    setIsEditing(!isEditing)
   }
 
   const handleClearWithEditMode = () => {
     handleClear()
-    setIsEditable(false)
+    setIsEditing(false)
   }
 
   const [isSaving, setIsSaving] = useState<boolean>(false)
   const handleSaveAsImage = () => {
-    if (!outputText || typeof outputText !== 'object' || isEditable) {
+    if (!outputText || typeof outputText !== 'object' || isEditing) {
       console.error('No valid output to save as image')
       return
     }
@@ -73,6 +73,7 @@ function App () {
         <div className="container mx-auto pt-20 pb-20 px-4">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold">ㄅㄆㄇㄈ注音小幫手</h1>
+            <p className="text-center mt-4 text-gray-500 text-sm">請使用電腦版操作以獲得更佳的體驗</p>
           </div>
 
           <div className="card">
@@ -102,7 +103,7 @@ function App () {
                 textColor={textColor}
                 bgColor={bgColor}
                 textScale={textScale}
-                isEditable={isEditable}
+                isEditing={isEditing}
                 outputText={outputText}
                 onTextColorChange={handleTextColorChange}
                 onBgColorChange={handleBgColorChange}
@@ -117,9 +118,8 @@ function App () {
                 textScale={textScale}
                 textColor={textColor}
                 bgColor={bgColor}
-                isEditable={isEditable}
+                isEditing={isEditing}
               />
-              <p className="text-center mt-4 text-gray-500 text-sm">請使用電腦版操作以獲得更佳的體驗</p>
             </div>
           </div>
         </div>

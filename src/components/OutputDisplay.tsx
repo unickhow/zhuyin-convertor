@@ -7,7 +7,7 @@ interface OutputDisplayProps {
   textScale: number
   textColor: string
   bgColor: string
-  isEditable: boolean
+  isEditing: boolean
 }
 
 export const OutputDisplay = ({
@@ -16,7 +16,7 @@ export const OutputDisplay = ({
   textScale,
   textColor,
   bgColor,
-  isEditable
+  isEditing
 }: OutputDisplayProps) => {
   const renderOutput = () => {
     if (convertType === 'zhuyin' && Array.isArray(outputText)) {
@@ -25,7 +25,7 @@ export const OutputDisplay = ({
           items={outputText}
           textScale={textScale}
           textColor={textColor}
-          isEditable={isEditable}
+          isEditing={isEditing}
         />
       )
     }
@@ -35,7 +35,7 @@ export const OutputDisplay = ({
   return (
     <div
       id="output-block"
-      className={`min-h-40 p-4 border rounded-md ${isEditable && 'editing-mode'}`}
+      className={`min-h-40 p-4 border rounded-md ${isEditing && 'editing-mode'}`}
       style={{ backgroundColor: bgColor }}
     >
       {renderOutput()}
