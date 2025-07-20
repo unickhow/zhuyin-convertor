@@ -20,22 +20,21 @@ function App () {
     convertType,
     handleConvert,
     handleModeChange,
-    handleClear
-  } = useTextConverter('很久很久以前，在一座被銀色月光輕輕撫摸的古老森林裡，住著一隻小狐狸。小狐狸有著柔軟的火紅尾巴和一雙像星星般閃亮的眼睛…')
+    handleClear,
+    handleZhuyinItemUpdate
+  } = useTextConverter()
 
   const [textColor, setTextColor] = useState<string>(CONSTANTS.DEFAULT_TEXT_COLOR)
-  const handleTextColorChange = (color: string) => !isEditing && setTextColor(color)
+  const handleTextColorChange = (color: string) => setTextColor(color)
 
   const [bgColor, setBgColor] = useState<string>(CONSTANTS.DEFAULT_BG_COLOR)
-  const handleBgColorChange = (color: string) => !isEditing && setBgColor(color)
+  const handleBgColorChange = (color: string) => setBgColor(color)
   const handleColorReset = () => {
-    if (isEditing) return
     setTextColor(CONSTANTS.DEFAULT_TEXT_COLOR)
     setBgColor(CONSTANTS.DEFAULT_BG_COLOR)
   }
   const [textFont, setTextFont] = useState<typeof Fonts[keyof typeof Fonts]['key']>(CONSTANTS.DEFAULT_FONT)
   const handleTextFontChange = (font: string) => {
-    if (isEditing) return
     setTextFont(font as typeof Fonts[keyof typeof Fonts]['key'])
   }
 
@@ -57,7 +56,7 @@ function App () {
 
   const [isSaving, setIsSaving] = useState<boolean>(false)
   const handleSaveAsImage = () => {
-    if (!outputText || typeof outputText !== 'object' || isEditing) {
+    if (!outputText || typeof outputText !== 'object') {
       console.error('No valid output to save as image')
       return
     }
@@ -109,20 +108,17 @@ function App () {
               onClear={handleClearWithEditMode}
             />
             <hr className="block my-8" />
-            <p className="text-center text-sm text-gray-500 mb-2">📝 現階段中文破音字不易維護，如有需求請開啟<u className="cursor-pointer transition hover:text-gray-900" onClick={handleEditableToggle}>編輯注音</u>模式，修正後再進行快照</p>
             <div>
               <ControlPanel
                 textColor={textColor}
                 bgColor={bgColor}
                 textScale={textScale}
                 textFont={textFont}
-                isEditing={isEditing}
                 outputText={outputText}
                 onTextColorChange={handleTextColorChange}
                 onBgColorChange={handleBgColorChange}
                 onTextFontChange={handleTextFontChange}
                 onTextScaleChange={handleTextScaleChange}
-                onEditableToggle={handleEditableToggle}
                 onColorReset={handleColorReset}
                 onSaveAsImage={handleSaveAsImage}
               />
@@ -134,6 +130,7 @@ function App () {
                 textFont={textFont}
                 bgColor={bgColor}
                 isEditing={isEditing}
+                onZhuyinChange={handleZhuyinItemUpdate}
               />
             </div>
           </div>

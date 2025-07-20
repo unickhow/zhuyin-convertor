@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { ZoomIn, ZoomOut, ScanSearch, Camera, BrushCleaning, PencilRuler } from 'lucide-react'
+import { ZoomIn, ZoomOut, ScanSearch, Camera, BrushCleaning } from 'lucide-react'
 import { CONSTANTS } from '@/lib/utils'
 import { Fonts, type ControlPanelProps } from '@/types'
 import {
@@ -19,13 +19,11 @@ export const ControlPanel = ({
   bgColor,
   textScale,
   textFont,
-  isEditing,
   outputText,
   onTextColorChange,
   onBgColorChange,
   onTextFontChange,
   onTextScaleChange,
-  onEditableToggle,
   onColorReset,
   onSaveAsImage
 }: ControlPanelProps) => {
@@ -37,9 +35,8 @@ export const ControlPanel = ({
             <input
               type="color"
               value={textColor}
-              disabled={isEditing}
               onChange={(e) => onTextColorChange(e.target.value)}
-              className={`w-8 h-8 border rounded-sm cursor-pointer ${isEditing && 'opacity-50'}`}
+              className="w-8 h-8 border rounded-sm cursor-pointer"
             />
           </TooltipTrigger>
           <TooltipContent>文字顏色</TooltipContent>
@@ -49,9 +46,8 @@ export const ControlPanel = ({
             <input
               type="color"
               value={bgColor}
-              disabled={isEditing}
               onChange={(e) => onBgColorChange(e.target.value)}
-              className={`w-8 h-8 border rounded-sm cursor-pointer ${isEditing && 'opacity-50'}`}
+              className="w-8 h-8 border rounded-sm cursor-pointer"
             />
           </TooltipTrigger>
           <TooltipContent>背景顏色</TooltipContent>
@@ -61,7 +57,6 @@ export const ControlPanel = ({
             <Button
               variant="outline"
               size="sm"
-              disabled={isEditing}
               onClick={onColorReset}
             >
               <BrushCleaning className="size-4" />
@@ -69,21 +64,8 @@ export const ControlPanel = ({
           </TooltipTrigger>
           <TooltipContent>重置顏色</TooltipContent>
         </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className={isEditing ? 'bg-gray-600 text-white' : ''}
-              onClick={onEditableToggle}
-            >
-              <PencilRuler className="size-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>編輯注音</TooltipContent>
-        </Tooltip>
 
-        <Select onValueChange={onTextFontChange} value={textFont} disabled={isEditing}>
+        <Select onValueChange={onTextFontChange} value={textFont}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="選擇字體" />
           </SelectTrigger>
@@ -143,7 +125,7 @@ export const ControlPanel = ({
             <Button
               variant="outline"
               size="sm"
-              disabled={!outputText || typeof outputText !== 'object' || isEditing}
+              disabled={!outputText || typeof outputText !== 'object'}
               onClick={onSaveAsImage}
             >
               <Camera className="size-4" />

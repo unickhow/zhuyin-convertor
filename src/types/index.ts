@@ -3,6 +3,7 @@ export interface ZhuyinItem {
   zhuyin: string
   tone: string
   symbol: string
+  heteronym?: Pick<ZhuyinItem, 'zhuyin' | 'tone' | 'symbol'>[]
 }
 
 export interface TextInputProps {
@@ -14,20 +15,18 @@ export interface TextInputProps {
 }
 
 export type ConvertType = 'zhuyin' | 'pinyin'
-export type OutputText = string | ZhuyinItem[]
+export type OutputText = ZhuyinItem[]
 
 export interface ControlPanelProps {
   textColor: string
   bgColor: string
   textScale: number
   textFont: typeof Fonts[keyof typeof Fonts]['key']
-  isEditing: boolean
   outputText: OutputText
   onTextColorChange: (color: string) => void
   onBgColorChange: (color: string) => void
   onTextFontChange: (font: typeof Fonts[keyof typeof Fonts]['key']) => void
   onTextScaleChange: (scale: number) => void
-  onEditableToggle: () => void
   onColorReset: () => void
   onSaveAsImage: () => void
 }
@@ -40,6 +39,7 @@ export interface OutputDisplayProps {
   textFont: typeof Fonts[keyof typeof Fonts]['key']
   bgColor: string
   isEditing: boolean
+  onZhuyinChange?: (index: number, newZhuyin: string, newTone: string, newSymbol: string) => void
 }
 
 export const Fonts = {

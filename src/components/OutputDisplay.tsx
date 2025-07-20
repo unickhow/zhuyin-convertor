@@ -8,7 +8,8 @@ export const OutputDisplay = ({
   textColor,
   textFont,
   bgColor,
-  isEditing
+  isEditing,
+  onZhuyinChange
 }: OutputDisplayProps) => {
   const renderOutput = () => {
     if (convertType === 'zhuyin' && Array.isArray(outputText)) {
@@ -18,6 +19,7 @@ export const OutputDisplay = ({
           textScale={textScale}
           textColor={textColor}
           isEditing={isEditing}
+          onZhuyinChange={onZhuyinChange}
         />
       )
     }
