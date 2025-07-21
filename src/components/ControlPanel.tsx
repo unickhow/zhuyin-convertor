@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { ZoomIn, ZoomOut, ScanSearch, Camera, BrushCleaning } from 'lucide-react'
+import { ZoomIn, ZoomOut, ScanSearch, Camera, BrushCleaning, Maximize2, Minimize2 } from 'lucide-react'
 import { CONSTANTS } from '@/lib/utils'
 import { Fonts, type ControlPanelProps } from '@/types'
 import {
@@ -21,11 +21,13 @@ export const ControlPanel = ({
   textFont,
   outputText,
   onTextColorChange,
+  isWideMode,
   onBgColorChange,
   onTextFontChange,
   onTextScaleChange,
   onColorReset,
-  onSaveAsImage
+  onSaveAsImage,
+  onWideModeToggle
 }: ControlPanelProps) => {
   return (
     <div className="flex flex-col items-center justify-between sm:flex-row gap-2 sticky top-0 z-10 py-4 bg-white">
@@ -119,6 +121,19 @@ export const ControlPanel = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent>放大</TooltipContent>
+        </Tooltip>
+        {/* toggle wild */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onWideModeToggle}
+            >
+              {isWideMode ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>切換寬度</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>

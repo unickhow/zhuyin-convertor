@@ -8,7 +8,6 @@ export const OutputDisplay = ({
   textColor,
   textFont,
   bgColor,
-  isEditing,
   onZhuyinChange
 }: OutputDisplayProps) => {
   const renderOutput = () => {
@@ -18,7 +17,6 @@ export const OutputDisplay = ({
           items={outputText}
           textScale={textScale}
           textColor={textColor}
-          isEditing={isEditing}
           onZhuyinChange={onZhuyinChange}
         />
       )
@@ -29,7 +27,7 @@ export const OutputDisplay = ({
   return (
     <div
       id="output-block"
-      className={`min-h-40 p-4 border rounded-md ${isEditing && 'editing-mode'} ${textFont}`}
+      className={`min-h-40 p-4 border rounded-md ${textFont}`}
       style={{ backgroundColor: bgColor }}
     >
       {renderOutput()}

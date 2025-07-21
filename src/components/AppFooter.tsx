@@ -12,16 +12,16 @@ const AppFooter = React.forwardRef<HTMLElement, FooterProps>(
       <footer
         ref={ref}
         className={cn(
-          "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
+          "app-footer",
           className
         )}
         {...props}
       >
-        <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
+        <div className="container mx-auto p-2 text-center text-sm text-muted-foreground max-w-5xl fog-container">
           <a
             href="https://github.com/unickhow/zhuyin-convertor"
             target="_blank"
-            className="inline-block"
+            className="inline-block text-gray-300 hover:text-gray-400 transition-colors"
             rel="noopener noreferrer"
           >
             <Github className="h-5 w-5" />

@@ -1,5 +1,7 @@
 @import "./shadcn.css";
+@import "./app.css";
 @import "./output-display.css";
+@import "./app-footer.css";
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -19,4 +21,25 @@ html, body {
 
 button {
   cursor: pointer;
+}
+
+.fog-container {
+  --fog-width: 150px;
+  @apply relative bg-white;
+  &::before, &::after {
+    @apply absolute top-0;
+    content: '';
+  }
+  &::before {
+    width: var(--fog-width);
+    height: 100%;
+    left: calc(-1 * var(--fog-width));
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+  }
+  &::after {
+    width: var(--fog-width);
+    height: 100%;
+    right: calc(-1 * var(--fog-width));
+    background: linear-gradient(to left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+  }
 }

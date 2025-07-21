@@ -6,10 +6,15 @@ Convert Chinese characters to Zhuyin (Bopomofo)
 
 ### Todo
 
-- [ ] **破音字**
+- [x] **破音字**: `/src/lib/heteronymPatch.json`
 - [ ] enhance UI
-- [ ] font size and color customization
-- [ ] snapshots
+- [x] font size and color customization
+- [x] snapshots _(mobile is not supported yet)_
 - [ ] add more features
+  - [x] add fonts options
+  - [x] wild screen mode
+  - [ ] TBD
+- [ ] test cases
+
 
 _Inspired by [antfu/handle](https://github.com/antfu/handle)_

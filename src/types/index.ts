@@ -23,12 +23,14 @@ export interface ControlPanelProps {
   textScale: number
   textFont: typeof Fonts[keyof typeof Fonts]['key']
   outputText: OutputText
+  isWideMode: boolean
   onTextColorChange: (color: string) => void
   onBgColorChange: (color: string) => void
   onTextFontChange: (font: typeof Fonts[keyof typeof Fonts]['key']) => void
   onTextScaleChange: (scale: number) => void
   onColorReset: () => void
   onSaveAsImage: () => void
+  onWideModeToggle: () => void
 }
 
 export interface OutputDisplayProps {
@@ -38,7 +40,6 @@ export interface OutputDisplayProps {
   textColor: string
   textFont: typeof Fonts[keyof typeof Fonts]['key']
   bgColor: string
-  isEditing: boolean
   onZhuyinChange?: (index: number, newZhuyin: string, newTone: string, newSymbol: string) => void
 }
 

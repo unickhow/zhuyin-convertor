@@ -9,7 +9,6 @@ interface ZhuyinRendererProps {
   items: ZhuyinItem[]
   textScale: number
   textColor: string
-  isEditing: boolean
   onZhuyinChange?: (index: number, newZhuyin: string, newTone: string, newSymbol: string) => void
 }
 
@@ -17,10 +16,8 @@ export const ZhuyinRenderer = ({
   items,
   textScale,
   textColor,
-  isEditing,
   onZhuyinChange
 }: ZhuyinRendererProps) => {
-  const isEditable = (item: ZhuyinItem) => isEditing && item.zhuyin !== ''
 
   const handleHeteronymClick = (itemIndex: number, heteronym: Pick<ZhuyinItem, 'zhuyin' | 'tone' | 'symbol'>) => {
     if (onZhuyinChange) {
@@ -36,7 +33,7 @@ export const ZhuyinRenderer = ({
           : <div key={`zhuyin-item-${index}-${item.char}`} className="flex items-center min-w-[30px] w-[80px]" style={{ color: textColor }}>
               <Popover>
                 <PopoverTrigger className="w-full h-full">
-                  <div className={`text-[3rem] min-h-[2rem] transition-opacity ${isEditing && 'opacity-30'}`}>
+                  <div className="text-[3rem] min-h-[2rem] transition-opacity">
                     {item.char}
                   </div>
                 </PopoverTrigger>
@@ -66,16 +63,12 @@ export const ZhuyinRenderer = ({
               <div className="flex items-center">
                 <div className="flex flex-col items-center justify-center">
                   <div
-                    contentEditable={isEditable(item)}
-                    suppressContentEditableWarning
-                    className={`text-[1rem] font-bold min-h-[2px] ${isEditable(item) ? 'border border-solid border-1 border-red-300 h-[1rem] w-[1rem]' : 'leading-[1px]'}`}
+                    className="text-[1rem] font-bold min-h-[2px] leading-[1px]"
                   >
                     {item.tone === '0' ? item.symbol : ''}
                   </div>
                   <div
-                    contentEditable={isEditable(item)}
-                    suppressContentEditableWarning
-                    className={`font-bold transition-[text] ${isEditable(item) ? 'text-[1.2rem] border border-solid border-1 border-red-300' : 'text-[1rem]'}`}
+                    className="font-bold transition-[text] text-[1rem]"
                     style={{
                       writingMode: 'vertical-rl',
                       textOrientation: 'upright'
@@ -85,9 +78,7 @@ export const ZhuyinRenderer = ({
                   </div>
                 </div>
                 <div
-                  contentEditable={isEditable(item)}
-                  suppressContentEditableWarning
-                  className={`text-[1rem] font-bold min-w-[2px] ${isEditable(item) ? 'border border-solid border-1 border-red-300 w-[.5rem]' : ''}`}
+                  className="text-[1rem] font-bold min-w-[2px]"
                   style={{
                     lineHeight: '3rem'
                   }}
