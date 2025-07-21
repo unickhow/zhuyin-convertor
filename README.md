@@ -13,7 +13,7 @@ Convert Chinese characters to Zhuyin (Bopomofo)
 - [ ] add more features
   - [x] add fonts options
   - [x] wild screen mode
-  - [ ] TBD
+  - [x] render sizes
 - [ ] test cases
 
 

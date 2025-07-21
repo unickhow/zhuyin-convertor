@@ -9,7 +9,7 @@ import { TextInput } from '@/components/TextInput'
 import { OutputDisplay } from '@/components/OutputDisplay'
 import { ControlPanel } from '@/components/ControlPanel'
 import { CONSTANTS } from '@/lib/utils'
-import { Fonts } from '@/types'
+import { Fonts, RenderSizes } from '@/types'
 import ZuhyinCanvasBackground from '@/components/ZhuyinCanvasBackground'
 import { cn } from '@/lib/utils'
 
@@ -77,12 +77,20 @@ function App () {
     setIsWideMode(!isWideMode)
   }
 
+  const [renderSize, setRenderSize] = useState<typeof RenderSizes[keyof typeof RenderSizes]>(CONSTANTS.DEFAULT_RENDER_SIZE)
+  const renderSizes = Object.values(RenderSizes)
+  const handleRenderSizeChange = () => {
+    const currentIndex = renderSizes.indexOf(renderSize)
+    const nextIndex = (currentIndex + 1) % renderSizes.length
+    setRenderSize(renderSizes[nextIndex])
+  }
+
   return (
     <ZuhyinCanvasBackground spacing={32} activeSymbolCount={20} animationDuration={5000}>
       <div className="min-h-screen flex flex-col">
         <main className="app-main flex-1">
           <div className={cn(
-            "container mx-auto pt-20 pb-20 px-4 min-h-[calc(100dvh-45px)] fog-container",
+            "container mx-auto pt-20 pb-20 px-4 min-h-[calc(100dvh-41px)] fog-container",
             isWideMode ? 'max-w-full' : 'max-w-5xl'
           )}>
             <div className="text-center mb-8">
@@ -115,18 +123,19 @@ function App () {
               <div>
                 <ControlPanel
                   textColor={textColor}
+                  onTextColorChange={handleTextColorChange}
                   bgColor={bgColor}
+                  onBgColorChange={handleBgColorChange}
+                  onColorReset={handleColorReset}
                   textScale={textScale}
+                  onTextScaleChange={handleTextScaleChange}
                   textFont={textFont}
+                  onTextFontChange={handleTextFontChange}
                   outputText={outputText}
                   isWideMode={isWideMode}
-                  onTextColorChange={handleTextColorChange}
-                  onBgColorChange={handleBgColorChange}
-                  onTextFontChange={handleTextFontChange}
-                  onTextScaleChange={handleTextScaleChange}
-                  onColorReset={handleColorReset}
-                  onSaveAsImage={handleSaveAsImage}
                   onWideModeToggle={handleWideModeToggle}
+                  onSaveAsImage={handleSaveAsImage}
+                  onRenderSizeChange={handleRenderSizeChange}
                 />
                 <OutputDisplay
                   outputText={outputText}
@@ -136,7 +145,11 @@ function App () {
                   textFont={textFont}
                   bgColor={bgColor}
                   onZhuyinChange={handleZhuyinItemUpdate}
+                  renderSize={renderSize}
                 />
+                <p className="text-center text-gray-500 text-sm mt-4">
+                  如有破音字不完整或其他問題，請<a className="underline" href="https://github.com/unickhow/zhuyin-convertor/issues" target="_blank" rel="noopener noreferrer">協助回報</a>，謝謝！
+                </p>
               </div>
             </div>
           </div>

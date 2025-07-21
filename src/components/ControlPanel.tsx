@@ -1,6 +1,15 @@
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { ZoomIn, ZoomOut, ScanSearch, Camera, BrushCleaning, Maximize2, Minimize2 } from 'lucide-react'
+import {
+  ZoomIn,
+  ZoomOut,
+  ScanSearch,
+  Camera,
+  BrushCleaning,
+  Maximize2,
+  Minimize2,
+  ALargeSmall
+} from 'lucide-react'
 import { CONSTANTS } from '@/lib/utils'
 import { Fonts, type ControlPanelProps } from '@/types'
 import {
@@ -13,21 +22,21 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-
 export const ControlPanel = ({
   textColor,
-  bgColor,
-  textScale,
-  textFont,
-  outputText,
   onTextColorChange,
-  isWideMode,
+  bgColor,
   onBgColorChange,
-  onTextFontChange,
-  onTextScaleChange,
   onColorReset,
+  textScale,
+  onTextScaleChange,
+  textFont,
+  onTextFontChange,
+  outputText,
+  isWideMode,
+  onWideModeToggle,
   onSaveAsImage,
-  onWideModeToggle
+  onRenderSizeChange
 }: ControlPanelProps) => {
   return (
     <div className="flex flex-col items-center justify-between sm:flex-row gap-2 sticky top-0 z-10 py-4 bg-white">
@@ -59,6 +68,7 @@ export const ControlPanel = ({
             <Button
               variant="outline"
               size="sm"
+              className="mr-8"
               onClick={onColorReset}
             >
               <BrushCleaning className="size-4" />
@@ -67,6 +77,18 @@ export const ControlPanel = ({
           <TooltipContent>重置顏色</TooltipContent>
         </Tooltip>
 
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onRenderSizeChange}
+            >
+              <ALargeSmall className="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>字體大小</TooltipContent>
+        </Tooltip>
         <Select onValueChange={onTextFontChange} value={textFont}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="選擇字體" />
@@ -122,12 +144,12 @@ export const ControlPanel = ({
           </TooltipTrigger>
           <TooltipContent>放大</TooltipContent>
         </Tooltip>
-        {/* toggle wild */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="outline"
               size="sm"
+              className="hidden xl:inline-flex"
               onClick={onWideModeToggle}
             >
               {isWideMode ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
@@ -140,6 +162,7 @@ export const ControlPanel = ({
             <Button
               variant="outline"
               size="sm"
+              className="hidden md:inline-flex"
               disabled={!outputText || typeof outputText !== 'object'}
               onClick={onSaveAsImage}
             >

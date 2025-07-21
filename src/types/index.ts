@@ -19,18 +19,19 @@ export type OutputText = ZhuyinItem[]
 
 export interface ControlPanelProps {
   textColor: string
+  onTextColorChange: (color: string) => void
   bgColor: string
+  onBgColorChange: (color: string) => void
+  onColorReset: () => void
   textScale: number
+  onTextScaleChange: (scale: number) => void
   textFont: typeof Fonts[keyof typeof Fonts]['key']
+  onTextFontChange: (font: typeof Fonts[keyof typeof Fonts]['key']) => void
   outputText: OutputText
   isWideMode: boolean
-  onTextColorChange: (color: string) => void
-  onBgColorChange: (color: string) => void
-  onTextFontChange: (font: typeof Fonts[keyof typeof Fonts]['key']) => void
-  onTextScaleChange: (scale: number) => void
-  onColorReset: () => void
-  onSaveAsImage: () => void
   onWideModeToggle: () => void
+  onSaveAsImage: () => void
+  onRenderSizeChange: () => void
 }
 
 export interface OutputDisplayProps {
@@ -41,6 +42,15 @@ export interface OutputDisplayProps {
   textFont: typeof Fonts[keyof typeof Fonts]['key']
   bgColor: string
   onZhuyinChange?: (index: number, newZhuyin: string, newTone: string, newSymbol: string) => void
+  renderSize: typeof RenderSizes[keyof typeof RenderSizes]
+}
+
+export interface ZhuyinRendererProps {
+  items: ZhuyinItem[]
+  textScale: number
+  textColor: string
+  onZhuyinChange?: (index: number, newZhuyin: string, newTone: string, newSymbol: string) => void
+  renderSize: typeof RenderSizes[keyof typeof RenderSizes]
 }
 
 export const Fonts = {
@@ -64,4 +74,10 @@ export const Fonts = {
     key: 'noto-sans',
     value: 'Noto Sans'
   }
+} as const
+
+export const RenderSizes = {
+  DEFAULT: 'size-default',
+  MEDIUM: 'size-medium',
+  SMALL: 'size-small'
 } as const

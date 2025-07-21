@@ -1,22 +1,17 @@
-import { ZhuyinItem } from '@/types'
+import type { ZhuyinItem, ZhuyinRendererProps } from '@/types'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
-
-interface ZhuyinRendererProps {
-  items: ZhuyinItem[]
-  textScale: number
-  textColor: string
-  onZhuyinChange?: (index: number, newZhuyin: string, newTone: string, newSymbol: string) => void
-}
+import { cn } from '@/lib/utils'
 
 export const ZhuyinRenderer = ({
   items,
   textScale,
   textColor,
-  onZhuyinChange
+  onZhuyinChange,
+  renderSize
 }: ZhuyinRendererProps) => {
 
   const handleHeteronymClick = (itemIndex: number, heteronym: Pick<ZhuyinItem, 'zhuyin' | 'tone' | 'symbol'>) => {
@@ -26,23 +21,25 @@ export const ZhuyinRenderer = ({
   }
 
   return (
-    <div className="zhuyin-renderer flex flex-wrap gap-x-2" style={{ scale: textScale }}>
+    <div
+      className={cn(
+        renderSize,
+        "zhuyin-renderer flex flex-wrap gap-x-2"
+      )}
+      style={{ scale: textScale }}
+    >
       {items.map((item, index) => (
         item.char === '\n'
           ? <div key={`zhuyin-item-${index}-${item.char}`} className="hr-breaker"></div>
-          : <div key={`zhuyin-item-${index}-${item.char}`} className="flex items-center min-w-[30px] w-[80px]" style={{ color: textColor }}>
+          : <div key={`zhuyin-item-${index}-${item.char}`} className="zhuyin-wrapper flex items-center" style={{ color: textColor }}>
               <Popover>
                 <PopoverTrigger className="w-full h-full">
-                  <div className="text-[3rem] min-h-[2rem] transition-opacity">
-                    {item.char}
-                  </div>
+                  <div className="zhuyin-wrapper__char">{item.char}</div>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-2">
                   <div className="flex flex-col items-center">
                     <div className="text-lg font-bold mb-2">注音符號</div>
-                    <div className="text-center text-sm">
-                      {item.zhuyin} {item.symbol}
-                    </div>
+                    <div className="text-center text-sm">{item.zhuyin} {item.symbol}</div>
                     {item.heteronym && item.heteronym.length > 0 && (
                       <div className="mt-2 text-xs text-gray-500">
                         所有讀音:
@@ -62,27 +59,12 @@ export const ZhuyinRenderer = ({
               </Popover>
               <div className="flex items-center">
                 <div className="flex flex-col items-center justify-center">
-                  <div
-                    className="text-[1rem] font-bold min-h-[2px] leading-[1px]"
-                  >
+                  <div className="zhuyin-wrapper__tone zhuyin-wrapper__tone--top">
                     {item.tone === '0' ? item.symbol : ''}
                   </div>
-                  <div
-                    className="font-bold transition-[text] text-[1rem]"
-                    style={{
-                      writingMode: 'vertical-rl',
-                      textOrientation: 'upright'
-                    }}
-                  >
-                    {item.zhuyin}
-                  </div>
+                  <div className="zhuyin-wrapper__zhuyin">{item.zhuyin}</div>
                 </div>
-                <div
-                  className="text-[1rem] font-bold min-w-[2px]"
-                  style={{
-                    lineHeight: '3rem'
-                  }}
-                >
+                <div className="zhuyin-wrapper__tone zhuyin-wrapper__tone--right">
                   {item.tone === '0' ? '' : item.symbol}
                 </div>
               </div>

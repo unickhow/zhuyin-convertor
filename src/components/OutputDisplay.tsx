@@ -8,7 +8,8 @@ export const OutputDisplay = ({
   textColor,
   textFont,
   bgColor,
-  onZhuyinChange
+  onZhuyinChange,
+  renderSize
 }: OutputDisplayProps) => {
   const renderOutput = () => {
     if (convertType === 'zhuyin' && Array.isArray(outputText)) {
@@ -18,6 +19,7 @@ export const OutputDisplay = ({
           textScale={textScale}
           textColor={textColor}
           onZhuyinChange={onZhuyinChange}
+          renderSize={renderSize}
         />
       )
     }
